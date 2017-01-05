@@ -190,12 +190,14 @@ def rsync_to_website(target_server, source_directory):
 
 def main():
     # check parameters
-    usage = 'Usage: %prog [options] target_server externals_job_number core_job_number'
+    usage = 'Usage: %prog [options] target_server'
     parser = optparse.OptionParser(usage)
+    parser.add_option('-c', '--core', action='store', type='string', dest='core_job', help='jenkins-job-output/build-irods-core/ job number')
+    parser.add_option('-e', '--externals', action='store', type='string', dest='externals_job', help='jenkins-job-output/build-irods-externals/ job number')
     parser.add_option('-q', '--quiet', action='store_const', const=0, dest='verbosity', help='print less information to stdout')
     parser.add_option('-v', '--verbose', action='count', dest='verbosity', default=1, help='print more information to stdout')
     (options, args) = parser.parse_args()
-    if len(args) != 3:
+    if len(args) != 1:
         parser.error('incorrect number of arguments')
     if len(args) == 0:
         parser.print_usage()
@@ -219,24 +221,28 @@ def main():
 
     # do it
     target_server = args[0]
+    if options.core_job:
+        log.debug('core job number [{0}]'.format(options.core_job))
+    if options.externals_job:
+        log.debug('externals job number [{0}]'.format(options.externals_job))
     log.debug('target server [{0}]'.format(target_server))
-    externals_job_number = args[1]
-    log.debug('externals job number [{0}]'.format(externals_job_number))
-    core_job_number = args[2]
-    log.debug('core job number [{0}]'.format(core_job_number))
     staging_directory = os.path.join(script_path, '{0}-sources'.format(target_server))
     target_directory = os.path.join(script_path, '{0}-html'.format(target_server))
+    if options.core_job or options.externals_job:
+        log.debug("preparing to copy jenkins directories")
+        move_earlier_destination_aside(staging_directory)
+        mkdir_p(staging_directory)
+        if options.externals_job:
+            copy_from_jenkins_directory('build-irods-externals', options.externals_job, staging_directory)
+        if options.core_job:
+            copy_from_jenkins_directory('build-irods-core', options.core_job, staging_directory)
+        rename_to_repository_convention(staging_directory)
+        sign_all_rpms_at_once(target_server, staging_directory)
 # --- begin comment block when adding singular packages
-#    move_earlier_destination_aside(staging_directory)
-#    mkdir_p(staging_directory)
-#    copy_from_jenkins_directory('build-irods-externals', externals_job_number, staging_directory)
-#    copy_from_jenkins_directory('build-irods-core', core_job_number, staging_directory)
-#    rename_to_repository_convention(staging_directory)
-#    sign_all_rpms_at_once(target_server, staging_directory)
-#    add_packages_to_repository(staging_directory, target_server, target_directory, 'yum', 'centos6', 'centos6')
-#    add_packages_to_repository(staging_directory, target_server, target_directory, 'yum', 'centos7', 'centos7')
-#    add_packages_to_repository(staging_directory, target_server, target_directory, 'yum', 'opensuse13.2', 'opensuse13.2')
-#    add_packages_to_repository(staging_directory, target_server, target_directory, 'apt', 'ubuntu12', 'precise')
+    add_packages_to_repository(staging_directory, target_server, target_directory, 'yum', 'centos6', 'centos6')
+    add_packages_to_repository(staging_directory, target_server, target_directory, 'yum', 'centos7', 'centos7')
+    add_packages_to_repository(staging_directory, target_server, target_directory, 'yum', 'opensuse13.2', 'opensuse13.2')
+    add_packages_to_repository(staging_directory, target_server, target_directory, 'apt', 'ubuntu12', 'precise')
     add_packages_to_repository(staging_directory, target_server, target_directory, 'apt', 'ubuntu14', 'trusty')
 # --- end comment block when adding singular packages
     build_centos7_releasever_symlinks(target_directory)
