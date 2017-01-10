@@ -157,10 +157,13 @@ def add_packages_to_repository(staging_directory, target_server, target_reposito
                 # create repo metadata
                 cmd = ['createrepo', '--database', repo_dir]
                 run_cmd(cmd, check_rc=True)
-                # sign repo
-                if not os.path.isfile('{0}/repodata/repomd.xml.asc'.format(repo_dir)):
-                    cmd = ['gpg', '--detach-sign', '-u', servers[target_server]['gpg_key_id'], '--armor', '{0}/repodata/repomd.xml'.format(repo_dir)]
-                    run_cmd(cmd, check_rc=True)
+                # sign repository metadata
+                repo_file = '{0}/repodata/repomd.xml'.format(repo_dir)
+                signed_repo_file = '{0}.asc'.format(repo_file)
+                if os.path.isfile(signed_repo_file):
+                    os.remove(signed_repo_file)
+                cmd = ['gpg', '--detach-sign', '-u', servers[target_server]['gpg_key_id'], '--armor', repo_file]
+                run_cmd(cmd, check_rc=True)
             else:
                 log.error('unknown repository_type [{0}]'.format(repository_type))
         else:
