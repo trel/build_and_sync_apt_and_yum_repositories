@@ -179,9 +179,9 @@ def force_symlink(file1, file2):
 
 def build_centos7_releasever_symlinks(target_directory):
     # centos7 $releasever has three flavors that must be available
-    fullpath = "{0}/yum/pool/centos7".format(target_directory)
+    os.chdir("{0}/yum/pool".format(target_directory))
     for suffix in ['Client','Server','Workstation']:
-        force_symlink(fullpath,"{0}{1}".format(fullpath,suffix))
+        force_symlink('centos7','centos7{0}'.format(suffix))
 
 def rsync_to_website(target_server, source_directory):
     log = logging.getLogger(__name__)
