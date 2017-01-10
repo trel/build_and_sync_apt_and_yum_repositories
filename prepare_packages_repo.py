@@ -198,6 +198,8 @@ def main():
     parser = optparse.OptionParser(usage)
     parser.add_option('-c', '--core', action='store', type='string', dest='core_job', help='jenkins-job-output/build-irods-core/ job number')
     parser.add_option('-e', '--externals', action='store', type='string', dest='externals_job', help='jenkins-job-output/build-irods-externals/ job number')
+    parser.add_option('-n', '--new', action='store_const', const=1, dest='new_staging_directory', help='create new staging_directory, save existing')
+    parser.add_option('-p', '--plugin', action='store', type='string', dest='plugin_job', help='jenkins-job-output/plugin-builder-via-ci-hook/ job number')
     parser.add_option('-q', '--quiet', action='store_const', const=0, dest='verbosity', help='print less information to stdout')
     parser.add_option('-v', '--verbose', action='count', dest='verbosity', default=1, help='print more information to stdout')
     (options, args) = parser.parse_args()
@@ -232,14 +234,18 @@ def main():
     log.debug('target server [{0}]'.format(target_server))
     staging_directory = os.path.join(script_path, '{0}-sources'.format(target_server))
     target_directory = os.path.join(script_path, '{0}-html'.format(target_server))
-    if options.core_job or options.externals_job:
-        log.debug("preparing to copy jenkins directories")
+    if options.new_staging_directory:
+        log.debug("creating new staging_directory, saving earlier version")
         move_earlier_destination_aside(staging_directory)
         mkdir_p(staging_directory)
+    if options.externals_job or options.core_job or options.plugin_job:
+        log.debug("preparing to copy jenkins directories")
         if options.externals_job:
             copy_from_jenkins_directory('build-irods-externals', options.externals_job, staging_directory)
         if options.core_job:
             copy_from_jenkins_directory('build-irods-core', options.core_job, staging_directory)
+        if options.plugin_job:
+            copy_from_jenkins_directory('plugin-builder-via-ci-hook', options.plugin_job, staging_directory)
         rename_to_repository_convention(staging_directory)
         sign_all_rpms_at_once(target_server, staging_directory)
 # --- begin comment block when adding singular packages
