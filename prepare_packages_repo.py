@@ -129,19 +129,22 @@ def add_packages_to_repository(staging_directory, target_server, target_reposito
                 pwd = os.path.realpath(script_path)
                 freight_configuration_file = os.path.join(pwd,'freight.conf')
                 with open(freight_configuration_file,'w') as fh:
-                    fh.write('VARLIB={0}\n'.format(os.path.join(pwd,'freight_library')))
-                    fh.write('VARCACHE={0}/apt\n'.format(target_repository_directory))
+                    fh.write('VARLIB={0}\n'.format(os.path.join(pwd,'freight_library_{0}'.format(target_server))))
+                    fh.write('VARCACHE={0}\n'.format(working_dir))
                     fh.write('GPG={0}\n'.format(servers[target_server]['gpg_key_id']))
                     fh.write('ORIGIN=\n')
                     fh.write('LABEL=\n')
-                # freight-add
+                # freight-add (puts files into the freight_library)
                 for dirpath, dirs, files in os.walk(source_directory):
                     for file in files:
                         if file.endswith('.deb'):
+                            # copy file
                             path = os.path.join(dirpath, file)
                             cmd = ['freight', 'add', '-v', '-c', freight_configuration_file, path, 'apt/{0}'.format(codename)]
                             run_cmd(cmd, check_rc=True)
-                # freight-cache
+                            # remove file
+                            os.remove(path)
+                # freight-cache (creates and signs repo metadata)
                 cmd = ['freight', 'cache', '-v', '-c', freight_configuration_file, 'apt/{0}'.format(codename)]
                 run_cmd(cmd, check_rc=True)
             # YUM
