@@ -1,6 +1,12 @@
 #!/usr/bin/env python
 from __future__ import print_function
 
+#=======================================================
+# TODO
+# - allow multiple plugins (-p) on single run
+# - write log of packages added since -n
+#=======================================================
+
 import distutils.dir_util
 import errno
 import logging
@@ -201,7 +207,7 @@ def main():
     parser = optparse.OptionParser(usage)
     parser.add_option('-c', '--core', action='store', type='string', dest='core_job', help='jenkins-job-output/build-irods-core/ job number')
     parser.add_option('-e', '--externals', action='store', type='string', dest='externals_job', help='jenkins-job-output/build-irods-externals/ job number')
-    parser.add_option('-n', '--new', action='store_const', const=1, dest='new_staging_directory', help='create new staging_directory, save existing')
+    parser.add_option('-n', '--new', action='store_const', const=1, dest='new_directories', help='create new staging, target, freight directories, save existing')
     parser.add_option('-p', '--plugin', action='store', type='string', dest='plugin_job', help='jenkins-job-output/plugin-builder-via-ci-hook/ job number')
     parser.add_option('-q', '--quiet', action='store_const', const=0, dest='verbosity', help='print less information to stdout')
     parser.add_option('-v', '--verbose', action='count', dest='verbosity', default=1, help='print more information to stdout')
@@ -237,10 +243,17 @@ def main():
     log.debug('target server [{0}]'.format(target_server))
     staging_directory = os.path.join(script_path, '{0}-sources'.format(target_server))
     target_directory = os.path.join(script_path, '{0}-html'.format(target_server))
-    if options.new_staging_directory:
+    freight_directory = os.path.join(script_path, 'freight_library_{0}'.format(target_server))
+    if options.new_directories:
         log.debug("creating new staging_directory, saving earlier version")
         move_earlier_destination_aside(staging_directory)
         mkdir_p(staging_directory)
+        log.debug("creating new target_directory, saving earlier version")
+        move_earlier_destination_aside(target_directory)
+        mkdir_p(staging_directory)
+        log.debug("creating new freight_directory, saving earlier version")
+        move_earlier_destination_aside(freight_directory)
+        mkdir_p(freight_directory)
     if options.externals_job or options.core_job or options.plugin_job:
         log.debug("preparing to copy jenkins directories")
         if options.externals_job:
