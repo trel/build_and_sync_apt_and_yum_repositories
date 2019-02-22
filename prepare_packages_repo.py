@@ -20,10 +20,11 @@ import time
 
 script_path = os.path.dirname(os.path.realpath(__file__))
 
+# behind load balancer
 servers = {
-    'packages': { 'ip': '172.25.14.46', 'gpg_key_id': 'ACF9B42B' },
-    'unstable': { 'ip': '172.25.14.63', 'gpg_key_id': '9086C490' },
-    'core-dev': { 'ip': '172.25.14.76', 'gpg_key_id': '055D7E48' }
+    'packages': { 'ip': '152.54.5.168', 'gpg_key_id': 'ACF9B42B' }, # public IP, using certbot
+    'unstable': { 'ip': '152.54.5.173', 'gpg_key_id': '9086C490' }, # public IP, using certbot
+    'core-dev': { 'ip': '152.54.5.174', 'gpg_key_id': '055D7E48' } # public IP, using certbot
 }
 
 operating_systems = {
