@@ -33,7 +33,8 @@ operating_systems = {
     'Opensuse _13':    'opensuse13.2',
     'Ubuntu_12':       'ubuntu12',
     'Ubuntu_14':       'ubuntu14',
-    'Ubuntu_16':       'ubuntu16'
+    'Ubuntu_16':       'ubuntu16',
+    'Ubuntu_18':       'ubuntu18'
     }
 
 def mkdir_p(path):
@@ -278,6 +279,7 @@ def main():
     add_packages_to_repository(staging_directory, target_server, target_directory, 'apt', 'ubuntu12', 'precise')
     add_packages_to_repository(staging_directory, target_server, target_directory, 'apt', 'ubuntu14', 'trusty')
     add_packages_to_repository(staging_directory, target_server, target_directory, 'apt', 'ubuntu16', 'xenial')
+    add_packages_to_repository(staging_directory, target_server, target_directory, 'apt', 'ubuntu18', 'bionic')
 # --- end comment block when adding singular packages
     build_centos7_releasever_symlinks(target_directory)
 #    rsync_to_website(target_server, target_directory)
