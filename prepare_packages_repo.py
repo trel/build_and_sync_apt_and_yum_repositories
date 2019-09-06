@@ -72,12 +72,8 @@ def move_earlier_destination_aside(destination):
         log.debug('copy collision detected - moving to [{0}]'.format(collision_location))
         os.rename(destination, collision_location)
 
-def copy_from_jenkins_directory(job_name, job_number, staging_directory):
+def copy_from_jenkins_directory(jenkins_directory, staging_directory):
     log = logging.getLogger(__name__)
-    if job_name == "run-script-on-vms":
-        jenkins_directory = '/projects/irods/vsphere-testing/jenkins-job-output/{0}/{1}'.format(job_name, job_number)
-    else:
-        jenkins_directory = '/projects/irods/vsphere-testing/jenkins-job-output/{0}/{1}/packages'.format(job_name, job_number)
     log.info('copying recursively from [{0}]'.format(jenkins_directory))
     log.debug('copy source      [{0}]'.format(jenkins_directory))
     log.debug('copy destination [{0}]'.format(staging_directory))
@@ -209,10 +205,9 @@ def main():
     # check parameters
     usage = 'Usage: %prog [options] target_server'
     parser = optparse.OptionParser(usage)
-    parser.add_option('-e', '--externals', action='store', type='string', dest='externals_job', help='jenkins-job-output/build-irods-externals/ job number')
     parser.add_option('-n', '--new', action='store_const', const=1, dest='new_directories', help='create new staging, target, freight directories, save existing')
     parser.add_option('-q', '--quiet', action='store_const', const=0, dest='verbosity', help='print less information to stdout')
-    parser.add_option('-s', '--script', action='store', type='string', dest='script_job', help='jenkins-job-output/run-script-on-vms/ job number')
+    parser.add_option('-j', '--jenkins', action='store', type='string', dest='jenkins_directory', help='fullpath of jenkins job directory')
     parser.add_option('-v', '--verbose', action='count', dest='verbosity', default=1, help='print more information to stdout')
     (options, args) = parser.parse_args()
     if len(args) != 1:
@@ -239,8 +234,6 @@ def main():
 
     # do it
     target_server = args[0]
-    if options.externals_job:
-        log.debug('externals job number [{0}]'.format(options.externals_job))
     log.debug('target server [{0}]'.format(target_server))
     staging_directory = os.path.join(script_path, '{0}-sources'.format(target_server))
     target_directory = os.path.join(script_path, '{0}-html'.format(target_server))
@@ -255,12 +248,9 @@ def main():
         log.debug("creating new freight_directory, saving earlier version")
         move_earlier_destination_aside(freight_directory)
         mkdir_p(freight_directory)
-    if options.externals_job or options.script_job:
-        log.debug("preparing to copy jenkins directories")
-        if options.externals_job:
-            copy_from_jenkins_directory('build-irods-externals', options.externals_job, staging_directory)
-        if options.script_job:
-            copy_from_jenkins_directory('run-script-on-vms', options.script_job, staging_directory)
+    if options.jenkins_directory:
+        log.debug("preparing to copy jenkins directory")
+        copy_from_jenkins_directory(options.jenkins_directory, staging_directory)
         rename_to_repository_convention(staging_directory)
         sign_all_rpms_at_once(target_server, staging_directory)
 # --- begin comment block when adding singular packages
