@@ -21,9 +21,9 @@ script_path = os.path.dirname(os.path.realpath(__file__))
 
 # behind load balancer
 servers = {
-    'packages': { 'ip': '152.54.5.168', 'gpg_key_id': 'ACF9B42B' }, # public IP, using certbot
-    'unstable': { 'ip': '152.54.5.173', 'gpg_key_id': '9086C490' }, # public IP, using certbot
-    'core-dev': { 'ip': '152.54.5.174', 'gpg_key_id': '055D7E48' } # public IP, using certbot
+    'packages': { 'ip': '152.54.5.114', 'gpg_key_id': 'ACF9B42B' }, # public IP, using certbot
+    'unstable': { 'ip': '152.54.5.113', 'gpg_key_id': '9086C490' }, # public IP, using certbot
+    'core-dev': { 'ip': '152.54.5.112', 'gpg_key_id': '055D7E48' }  # public IP, using certbot
 }
 
 operating_systems = {
