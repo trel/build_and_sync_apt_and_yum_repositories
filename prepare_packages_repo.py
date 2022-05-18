@@ -29,11 +29,15 @@ servers = {
 operating_systems = {
     'Centos_6':        'centos6',
     'Centos linux_7':  'centos7',
+    'Almalinux 8':     'almalinux8',
     'Opensuse _13':    'opensuse13.2',
     'Ubuntu_12':       'ubuntu12',
     'Ubuntu_14':       'ubuntu14',
     'Ubuntu_16':       'ubuntu16',
-    'Ubuntu_18':       'ubuntu18'
+    'Ubuntu_18':       'ubuntu18',
+    'Ubuntu_20':       'ubuntu20',
+    'Ubuntu_22':       'ubuntu22',
+    'Debian_11':       'debian11'
     }
 
 def mkdir_p(path):
@@ -130,7 +134,7 @@ def add_packages_to_repository(staging_directory, target_server, target_reposito
             os.chdir(working_dir)
             log.debug('working dir [{0}]'.format(working_dir))
             # APT
-            if repository_type == 'apt':
+            if repository_type in ['apt']:
                 # generate freight configuration file
                 pwd = os.path.realpath(script_path)
                 freight_configuration_file = os.path.join(pwd,'freight.conf')
@@ -154,7 +158,7 @@ def add_packages_to_repository(staging_directory, target_server, target_reposito
                 cmd = ['freight', 'cache', '-v', '-c', freight_configuration_file, 'apt/{0}'.format(codename)]
                 run_cmd(cmd, check_rc=True)
             # YUM
-            elif repository_type == 'yum':
+            elif repository_type in ['yum']:
                 repo_dir = '{0}/pool/{1}/x86_64'.format(working_dir, codename)
                 # move files
                 mkdir_p(repo_dir)
@@ -188,7 +192,9 @@ def force_symlink(file1, file2):
 
 def build_centos7_releasever_symlinks(target_directory):
     # centos7 $releasever has three flavors that must be available
-    os.chdir("{0}/yum/pool".format(target_directory))
+    yum_pool_dir = "{0}/yum/pool".format(target_directory)
+    mkdir_p(yum_pool_dir)
+    os.chdir(yum_pool_dir)
     for suffix in ['Client','Server','Workstation']:
         force_symlink('centos7','centos7{0}'.format(suffix))
 
@@ -244,7 +250,7 @@ def main():
         mkdir_p(staging_directory)
         log.debug("creating new target_directory, saving earlier version")
         move_earlier_destination_aside(target_directory)
-        mkdir_p(staging_directory)
+        mkdir_p(target_directory)
         log.debug("creating new freight_directory, saving earlier version")
         move_earlier_destination_aside(freight_directory)
         mkdir_p(freight_directory)
@@ -256,11 +262,15 @@ def main():
 # --- begin comment block when adding singular packages
     add_packages_to_repository(staging_directory, target_server, target_directory, 'yum', 'centos6', 'centos6')
     add_packages_to_repository(staging_directory, target_server, target_directory, 'yum', 'centos7', 'centos7')
+    add_packages_to_repository(staging_directory, target_server, target_directory, 'yum', 'almalinux8', 'el8') # dnf, but still use yum as repository_type
     add_packages_to_repository(staging_directory, target_server, target_directory, 'yum', 'opensuse13.2', 'opensuse13.2')
     add_packages_to_repository(staging_directory, target_server, target_directory, 'apt', 'ubuntu12', 'precise')
     add_packages_to_repository(staging_directory, target_server, target_directory, 'apt', 'ubuntu14', 'trusty')
     add_packages_to_repository(staging_directory, target_server, target_directory, 'apt', 'ubuntu16', 'xenial')
     add_packages_to_repository(staging_directory, target_server, target_directory, 'apt', 'ubuntu18', 'bionic')
+    add_packages_to_repository(staging_directory, target_server, target_directory, 'apt', 'ubuntu20', 'focal')
+    add_packages_to_repository(staging_directory, target_server, target_directory, 'apt', 'ubuntu22', 'jammy')
+    add_packages_to_repository(staging_directory, target_server, target_directory, 'apt', 'debian11', 'bullseye')
 # --- end comment block when adding singular packages
     build_centos7_releasever_symlinks(target_directory)
 #    rsync_to_website(target_server, target_directory)
