@@ -30,6 +30,7 @@ operating_systems = {
     'Centos_6':        'centos6',
     'Centos linux_7':  'centos7',
     'Almalinux 8':     'almalinux8',
+    'RockyLinux_9':    'rockylinux9',
     'Opensuse _13':    'opensuse13.2',
     'Ubuntu_12':       'ubuntu12',
     'Ubuntu_14':       'ubuntu14',
@@ -37,7 +38,8 @@ operating_systems = {
     'Ubuntu_18':       'ubuntu18',
     'Ubuntu_20':       'ubuntu20',
     'Ubuntu_22':       'ubuntu22',
-    'Debian_11':       'debian11'
+    'Debian_11':       'debian11',
+    'Debian_12':       'debian12'
     }
 
 def mkdir_p(path):
@@ -263,6 +265,7 @@ def main():
     add_packages_to_repository(staging_directory, target_server, target_directory, 'yum', 'centos6', 'centos6')
     add_packages_to_repository(staging_directory, target_server, target_directory, 'yum', 'centos7', 'centos7')
     add_packages_to_repository(staging_directory, target_server, target_directory, 'yum', 'almalinux8', 'el8') # dnf, but still use yum as repository_type
+    add_packages_to_repository(staging_directory, target_server, target_directory, 'yum', 'rockylinux9', 'el9') # dnf, but still use yum as repository_type
     add_packages_to_repository(staging_directory, target_server, target_directory, 'yum', 'opensuse13.2', 'opensuse13.2')
     add_packages_to_repository(staging_directory, target_server, target_directory, 'apt', 'ubuntu12', 'precise')
     add_packages_to_repository(staging_directory, target_server, target_directory, 'apt', 'ubuntu14', 'trusty')
@@ -271,6 +274,7 @@ def main():
     add_packages_to_repository(staging_directory, target_server, target_directory, 'apt', 'ubuntu20', 'focal')
     add_packages_to_repository(staging_directory, target_server, target_directory, 'apt', 'ubuntu22', 'jammy')
     add_packages_to_repository(staging_directory, target_server, target_directory, 'apt', 'debian11', 'bullseye')
+    add_packages_to_repository(staging_directory, target_server, target_directory, 'apt', 'debian12', 'bookworm')
 # --- end comment block when adding singular packages
     build_centos7_releasever_symlinks(target_directory)
 #    rsync_to_website(target_server, target_directory)
