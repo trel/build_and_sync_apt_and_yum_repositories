@@ -27,6 +27,7 @@ servers = {
 }
 
 operating_systems = {
+    # up to 4.3.1
     'Centos_6':        'centos6',
     'Centos linux_7':  'centos7',
     'Almalinux 8':     'almalinux8',
@@ -39,7 +40,17 @@ operating_systems = {
     'Ubuntu_20':       'ubuntu20',
     'Ubuntu_22':       'ubuntu22',
     'Debian_11':       'debian11',
-    'Debian_12':       'debian12'
+    'Debian_12':       'debian12',
+
+    # 4.3.2 and later
+    'deb11':           'debian11',
+    'deb12':           'debian12',
+    'el7':             'centos7',
+    'el8':             'almalinux8',
+    'el9':             'rockylinux9',
+    'ub20.04':         'ubuntu20',
+    'ub22.04':         'ubuntu22'
+
     }
 
 def mkdir_p(path):
