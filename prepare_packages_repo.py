@@ -49,7 +49,9 @@ operating_systems = {
     'el8':             'almalinux8',
     'el9':             'rockylinux9',
     'ub20.04':         'ubuntu20',
-    'ub22.04':         'ubuntu22'
+    'ub20':            'ubuntu20',
+    'ub22.04':         'ubuntu22',
+    'ub22':            'ubuntu22'
 
     }
 
