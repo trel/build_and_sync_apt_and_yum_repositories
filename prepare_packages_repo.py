@@ -51,7 +51,9 @@ operating_systems = {
     'ub20.04':         'ubuntu20',
     'ub20':            'ubuntu20',
     'ub22.04':         'ubuntu22',
-    'ub22':            'ubuntu22'
+    'ub22':            'ubuntu22',
+    'ub24.04':         'ubuntu24',
+    'ub24':            'ubuntu24'
 
     }
 
@@ -286,6 +288,7 @@ def main():
     add_packages_to_repository(staging_directory, target_server, target_directory, 'apt', 'ubuntu18', 'bionic')
     add_packages_to_repository(staging_directory, target_server, target_directory, 'apt', 'ubuntu20', 'focal')
     add_packages_to_repository(staging_directory, target_server, target_directory, 'apt', 'ubuntu22', 'jammy')
+    add_packages_to_repository(staging_directory, target_server, target_directory, 'apt', 'ubuntu24', 'noble')
     add_packages_to_repository(staging_directory, target_server, target_directory, 'apt', 'debian11', 'bullseye')
     add_packages_to_repository(staging_directory, target_server, target_directory, 'apt', 'debian12', 'bookworm')
 # --- end comment block when adding singular packages
