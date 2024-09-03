@@ -152,6 +152,10 @@ def add_packages_to_repository(staging_directory, target_server, target_reposito
             log.debug('working dir [{0}]'.format(working_dir))
             # APT
             if repository_type in ['apt']:
+                # generate ORIGIN string
+                origin_string = 'irods'
+                if target_server in ['unstable', 'core-dev']:
+                    origin_string = 'irods {0}'.format(target_server)
                 # generate freight configuration file
                 pwd = os.path.realpath(script_path)
                 freight_configuration_file = os.path.join(pwd,'freight.conf')
@@ -159,7 +163,7 @@ def add_packages_to_repository(staging_directory, target_server, target_reposito
                     fh.write('VARLIB={0}\n'.format(os.path.join(pwd,'freight_library_{0}'.format(target_server))))
                     fh.write('VARCACHE={0}\n'.format(working_dir))
                     fh.write('GPG={0}\n'.format(servers[target_server]['gpg_key_id']))
-                    fh.write('ORIGIN=\n')
+                    fh.write('ORIGIN="{0}"\n'.format(origin_string))
                     fh.write('LABEL=\n')
                 # freight-add (puts files into the freight_library)
                 for dirpath, dirs, files in os.walk(source_directory):
