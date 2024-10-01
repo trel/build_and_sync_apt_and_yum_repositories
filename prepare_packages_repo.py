@@ -116,7 +116,7 @@ def rename_to_repository_convention(fullpath):
 
 def sign_all_rpms_at_once(target_server, fullpath):
     log = logging.getLogger(__name__)
-    cmd = 'rpmsign --addsign --key-id={0} `find {1} -name "*.rpm" -size +0c`'.format(servers[target_server]['gpg_key_id'],fullpath)
+    cmd = 'rpmsign --addsign --key-id={0} --digest-algo=sha384 `find {1} -name "*.rpm" -size +0c`'.format(servers[target_server]['gpg_key_id'],fullpath)
     run_cmd(cmd, unsafe_shell=True, check_rc=True)
 
 def add_packages_to_repository(staging_directory, target_server, target_repository_directory, repository_type, osversion, codename):
