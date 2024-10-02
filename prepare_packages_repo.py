@@ -14,6 +14,7 @@ import os
 import platform
 import subprocess
 import shutil
+import stat
 import sys
 import time
 
@@ -64,6 +65,12 @@ def mkdir_p(path):
         if exc.errno == errno.EEXIST and os.path.isdir(path):
             pass
         else: raise
+
+def chmod_recursive(path, mode):
+    for root, dirs, files in os.walk(path):
+        for file in files:
+            full_path = os.path.join(root, file)
+            os.chmod(full_path, mode)
 
 def run_cmd(cmd, run_env=False, unsafe_shell=False, check_rc=False):
     log = logging.getLogger(__name__)
@@ -278,6 +285,7 @@ def main():
     if options.jenkins_directory:
         log.debug("preparing to copy jenkins directory")
         copy_from_jenkins_directory(options.jenkins_directory, staging_directory)
+        chmod_recursive(staging_directory, stat.S_IRUSR | stat.S_IWUSR | stat.S_IRGRP | stat.S_IROTH) # 0o644
         rename_to_repository_convention(staging_directory)
         sign_all_rpms_at_once(target_server, staging_directory)
 # --- begin comment block when adding singular packages
