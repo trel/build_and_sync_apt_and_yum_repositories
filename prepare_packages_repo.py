@@ -46,9 +46,11 @@ operating_systems = {
     # 4.3.2 and later
     'deb11':           'debian11',
     'deb12':           'debian12',
+    'deb13':           'debian13',
     'el7':             'centos7',
     'el8':             'almalinux8',
     'el9':             'rockylinux9',
+    'el10':            'rockylinux10',
     'ub20.04':         'ubuntu20',
     'ub20':            'ubuntu20',
     'ub22.04':         'ubuntu22',
@@ -293,6 +295,7 @@ def main():
     add_packages_to_repository(staging_directory, target_server, target_directory, 'yum', 'centos7', 'centos7')
     add_packages_to_repository(staging_directory, target_server, target_directory, 'yum', 'almalinux8', 'el8') # dnf, but still use yum as repository_type
     add_packages_to_repository(staging_directory, target_server, target_directory, 'yum', 'rockylinux9', 'el9') # dnf, but still use yum as repository_type
+    add_packages_to_repository(staging_directory, target_server, target_directory, 'yum', 'rockylinux10', 'el10') # dnf, but still use yum as repository_type
     add_packages_to_repository(staging_directory, target_server, target_directory, 'yum', 'opensuse13.2', 'opensuse13.2')
     add_packages_to_repository(staging_directory, target_server, target_directory, 'apt', 'ubuntu12', 'precise')
     add_packages_to_repository(staging_directory, target_server, target_directory, 'apt', 'ubuntu14', 'trusty')
@@ -303,6 +306,7 @@ def main():
     add_packages_to_repository(staging_directory, target_server, target_directory, 'apt', 'ubuntu24', 'noble')
     add_packages_to_repository(staging_directory, target_server, target_directory, 'apt', 'debian11', 'bullseye')
     add_packages_to_repository(staging_directory, target_server, target_directory, 'apt', 'debian12', 'bookworm')
+    add_packages_to_repository(staging_directory, target_server, target_directory, 'apt', 'debian13', 'trixie')
 # --- end comment block when adding singular packages
     build_centos7_releasever_symlinks(target_directory)
 #    rsync_to_website(target_server, target_directory)
